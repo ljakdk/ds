@@ -386,7 +386,7 @@
       <button class="tool" data-tool="eyedropper" title="스포이드 (I)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.12 2.12 0 1 1 3 3L18 9l.4.4a2.12 2.12 0 1 1-3 3l-3.8-3.8a2.12 2.12 0 1 1 3-3l.4.4Z"/></svg></button>
       <button class="tool" data-tool="text" title="글자 (T)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14M12 5v14M9 19h6"/></svg></button>
       <button class="tool" data-tool="stamp" title="스탬프 (P)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9 6.7 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
-      <button class="tool" data-tool="select" title="선택/옮기기 (V)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 3"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></button>
+      <button class="tool" data-tool="select" title="개체 선택/옮기기 — 스탬프·선·글자 클릭 (V)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3l16 7-6.5 2.2L11 19z"/></svg></button>
       <button class="tool adv" data-tool="gradient" title="그라데이션 (D)"><svg viewBox="0 0 24 24"><defs><linearGradient id="gico" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs><rect x="3.5" y="5.5" width="17" height="13" rx="2" fill="url(#gico)" stroke="currentColor" stroke-width="1.6"/></svg></button>
       <button class="tool adv" data-tool="line" title="직선 (L)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg></button>
       <button class="tool adv" data-tool="rect" title="사각형 (R)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button>
@@ -794,6 +794,46 @@
     if(strokeCanvas.parentNode)strokeCanvas.remove();strokeCtx.clearRect(0,0,state.W,state.H);clearCursor();
     if(l)updateThumb(l);selActive=false;selCanvas=null;selRect=null;selDragging=false;scheduleAutosave();showSelBar();}
 
+  // 클릭한 지점의 "이어진 개체"(스탬프·선·글자)를 찾아 들어 올림
+  function objectSelectAt(sx,sy){
+    const l=activeLayer();if(!l||!l.visible)return false;
+    const W=state.W,H=state.H;if(sx<0||sy<0||sx>=W||sy>=H)return false;
+    const img=l.ctx.getImageData(0,0,W,H),d=img.data,N=W*H;
+    const alpha=new Uint8Array(N);for(let p=0,i=3;p<N;p++,i+=4)alpha[p]=d[i]>20?1:0;
+    // 갭 브리지(글자 사이·연필 알갱이 이어주기)
+    const G=7;let cur=alpha.slice();
+    for(let g=0;g<G;g++){const nx=cur.slice();
+      for(let y=1;y<H-1;y++){const r=y*W;for(let x=1;x<W-1;x++){const p=r+x;if(cur[p])continue;
+        if(cur[p-1]||cur[p+1]||cur[p-W]||cur[p+W])nx[p]=1;}}
+      cur=nx;}
+    if(!cur[sy*W+sx])return false; // 빈 곳 클릭 → 선택 없음
+    // 연결요소 플러드필
+    const comp=new Uint8Array(N),st=[sx,sy];
+    while(st.length){const y=st.pop(),x=st.pop();
+      let yy=y;while(yy>=0&&cur[yy*W+x]&&!comp[yy*W+x])yy--;yy++;
+      let rl=false,rr=false;
+      for(;yy<H&&cur[yy*W+x]&&!comp[yy*W+x];yy++){comp[yy*W+x]=1;
+        if(x>0){const m=cur[yy*W+x-1]&&!comp[yy*W+x-1];if(m&&!rl){st.push(x-1,yy);rl=true;}else if(!m)rl=false;}
+        if(x<W-1){const m=cur[yy*W+x+1]&&!comp[yy*W+x+1];if(m&&!rr){st.push(x+1,yy);rr=true;}else if(!m)rr=false;}}}
+    // 실제 개체 픽셀(comp & alpha)의 bbox
+    let minx=W,miny=H,maxx=-1,maxy=-1;
+    for(let y=0;y<H;y++){const r=y*W;for(let x=0;x<W;x++){if(comp[r+x]&&alpha[r+x]){if(x<minx)minx=x;if(x>maxx)maxx=x;if(y<miny)miny=y;if(y>maxy)maxy=y;}}}
+    if(maxx<0)return false;
+    const bw=maxx-minx+1,bh=maxy-miny+1;
+    pushUndo();
+    const sc=makeCanvas(bw,bh),sctx=sc.getContext('2d');
+    const out=sctx.createImageData(bw,bh),od=out.data;
+    for(let y=0;y<bh;y++)for(let x=0;x<bw;x++){const gp=(miny+y)*W+(minx+x);
+      if(comp[gp]&&alpha[gp]){const si=gp*4,di=(y*bw+x)*4;
+        od[di]=d[si];od[di+1]=d[si+1];od[di+2]=d[si+2];od[di+3]=d[si+3];
+        d[si+3]=0;}} // 레이어에서 개체 픽셀 제거
+    sctx.putImageData(out,0,0);
+    l.ctx.putImageData(img,0,0);updateThumb(l);
+    selCanvas=sc;selRect={x:minx,y:miny,w:bw,h:bh};selActive=true;
+    strokeCanvas.style.opacity='1';strokeCanvas.style.mixBlendMode='normal';
+    l.canvas.insertAdjacentElement('afterend',strokeCanvas);renderFloat();drawMarquee(selRect);showSelBar();
+    return true;}
+
   function beginBrush(l,p,e){
     strokeBrush=BRUSHES[state.brush];strokeRgb=hexToRgb(state.color);
     strokeCtx.clearRect(0,0,state.W,state.H);
@@ -864,7 +904,9 @@
     if(state.tool==='select'){
       if(selActive&&p.x>=selRect.x&&p.x<=selRect.x+selRect.w&&p.y>=selRect.y&&p.y<=selRect.y+selRect.h){
         selDragging=true;selMoveStart={x:p.x,y:p.y,rx:selRect.x,ry:selRect.y};drawing=true;return;}
-      commitSelection();marqueeStart={x:p.x,y:p.y};drawing=true;return;}
+      commitSelection();
+      if(objectSelectAt(Math.round(p.x),Math.round(p.y))){selDragging=true;selMoveStart={x:p.x,y:p.y,rx:selRect.x,ry:selRect.y};drawing=true;}
+      return;}
     if(state.tool==='text'){openTextDialog(p);return;}
     if(state.tool==='stamp'){pushUndo();drawStamp(l,p);updateThumb(l);return;}
     if(state.tool==='fill'){pushUndo();floodFill(l,Math.round(p.x),Math.round(p.y),state.color,state.opacity);updateThumb(l);return;}
@@ -881,8 +923,8 @@
   function moveStroke(e){
     if(!drawing)return;const l=activeLayer();if(!l)return;
     if(state.tool==='select'){const p=eventToCanvas(e);
-      if(selDragging){selRect.x=selMoveStart.rx+(p.x-selMoveStart.x);selRect.y=selMoveStart.ry+(p.y-selMoveStart.y);renderFloat();drawMarquee(selRect);return;}
-      drawMarquee({x:Math.min(marqueeStart.x,p.x),y:Math.min(marqueeStart.y,p.y),w:Math.abs(p.x-marqueeStart.x),h:Math.abs(p.y-marqueeStart.y)});return;}
+      if(selDragging){selRect.x=selMoveStart.rx+(p.x-selMoveStart.x);selRect.y=selMoveStart.ry+(p.y-selMoveStart.y);renderFloat();drawMarquee(selRect);}
+      return;}
     if(state.tool==='move'){const p=eventToCanvas(e);const dx=p.x-moveStart.x,dy=p.y-moveStart.y;
       l.ctx.clearRect(0,0,state.W,state.H);l.ctx.putImageData(moveSnap,Math.round(dx),Math.round(dy));return;}
     if(state.tool==='gradient'){const raw=eventToCanvas(e);l.ctx.putImageData(previewSnap,0,0);drawGradient(l.ctx,shapeStart,raw);return;}
@@ -901,9 +943,8 @@
   function endStroke(e){
     if(!drawing)return;
     if(state.tool==='select'){
-      if(selDragging){selDragging=false;drawing=false;scheduleAutosave();return;}
-      const p=eventToCanvas(e);const r={x:Math.min(marqueeStart.x,p.x),y:Math.min(marqueeStart.y,p.y),w:Math.abs(p.x-marqueeStart.x),h:Math.abs(p.y-marqueeStart.y)};
-      drawing=false;marqueeStart=null;liftSelection(activeLayer(),r);return;}
+      if(selDragging){selDragging=false;scheduleAutosave();}
+      drawing=false;return;}
     drawing=false;const l=activeLayer();
     if(l){
       if(state.tool==='gradient'){const raw=eventToCanvas(e);l.ctx.putImageData(previewSnap,0,0);drawGradient(l.ctx,shapeStart,raw);}
