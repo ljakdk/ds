@@ -4,18 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>드로잉 스튜디오</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#1e1e24; --panel:#2a2a33; --panel-2:#33333d; --border:#3d3d48;
-    --text:#e8e8ee; --text-dim:#9a9aa8; --accent:#5b8def; --accent-2:#4a7ad9;
-    --danger:#e05656; --ok:#43b57f; --radius:10px; --shadow:0 4px 16px rgba(0,0,0,.35);
-    --canvas-bg:#26262d; --canvas-check:#2c2c34;
+    --bg:#f5f6f8; --panel:#ffffff; --panel-2:#f1f2f6; --border:#e6e7ec;
+    --text:#23262e; --text-dim:#8b909c; --accent:#7c6cff; --accent-2:#6455e8;
+    --danger:#ef5b6b; --ok:#2fb884; --radius:12px; --shadow:0 2px 10px rgba(24,24,45,.07);
+    --canvas-bg:#e9eaef; --canvas-check:#dfe1e8; --dot:rgba(40,40,70,.06); --edge:#2c2a33;
   }
-  :root[data-theme="light"]{
-    --bg:#eceef3; --panel:#ffffff; --panel-2:#eef0f5; --border:#d5d8e0;
-    --text:#20222a; --text-dim:#6b7180; --accent:#3b73e8; --accent-2:#2f61cf;
-    --danger:#d64545; --ok:#2e9e6b; --shadow:0 4px 16px rgba(0,0,0,.14);
-    --canvas-bg:#c7c9d2; --canvas-check:#d7d9e2;
+  :root[data-theme="dark"]{
+    --bg:#181a20; --panel:#20232b; --panel-2:#282c35; --border:#333845;
+    --text:#e8eaf0; --text-dim:#9aa0ad; --accent:#8b7cff; --accent-2:#7c6cff;
+    --danger:#ef5b6b; --ok:#3ecb95; --shadow:0 3px 14px rgba(0,0,0,.35);
+    --canvas-bg:#15171c; --canvas-check:#1d2027; --dot:rgba(255,255,255,.045); --edge:#565c6e;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;height:100%;overflow:hidden;
@@ -36,7 +39,6 @@
   button.tool svg,button.act svg{width:18px;height:18px;}
   button.tool:hover,button.act:hover{background:rgba(255,255,255,.08);}
   button.tool.active{background:var(--accent);color:#fff;}
-  #classRoomBtn.active-room{background:var(--ok);color:#fff;}
   button.act.danger:hover{background:var(--danger);color:#fff;}
   button:disabled{opacity:.35;cursor:default;}
 
@@ -211,15 +213,87 @@
 
   .mobile-toggle{display:none;}
   @media (max-width:900px){
-    .side{position:absolute;right:0;top:0;bottom:0;z-index:30;transform:translateX(100%);transition:transform .25s;box-shadow:var(--shadow);}
-    .side.open{transform:translateX(0);}
-    .mobile-toggle{display:flex;}
-    .brand{font-size:13px;}
+    .brand{font-size:15px;}
     .topbar{padding:6px 8px;gap:5px;}
     button.tool,button.act{min-width:34px;height:34px;padding:0 6px;}
     .hide-sm{display:none;}
     .rail{width:46px;}
   }
+
+  /* ===== 귀여운 스타일 ===== */
+  html,body{font-family:"Jua","Apple SD Gothic Neo","Malgun Gothic",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    letter-spacing:.35px;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;}
+  .btype span:last-child{font-size:10.5px;}
+  .rail .vlabel{font-size:10px;}
+  .layer .lmeta{font-size:9.5px;letter-spacing:.2px;}
+  .hint{line-height:2;letter-spacing:.3px;}
+  .side .row label,.toggle-line span{letter-spacing:.3px;}
+  .footer{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:8px;height:29px;
+    font-size:11.5px;color:var(--text-dim);background:var(--panel);border-top:1.5px solid var(--border);letter-spacing:.4px;}
+  .footer b{color:var(--text);font-weight:400;}
+  .footer a{color:var(--accent-2);text-decoration:none;font-weight:400;border-bottom:1.5px dotted var(--accent-2);padding-bottom:1px;}
+  .footer a:hover{color:var(--accent);border-bottom-color:var(--accent);}
+  .brand{font-size:19px;font-weight:400;letter-spacing:0;}
+  .brand span{color:var(--accent);}
+  .topbar{gap:8px;}
+  .group{border:1.5px solid var(--border);background:var(--panel-2);border-radius:16px;padding:4px;}
+  button.tool,button.act{border-radius:12px;font-weight:400;}
+  button.tool:hover,button.act:hover{background:rgba(124,108,255,.12);}
+  button.tool.active{background:var(--accent);color:#fff;box-shadow:2px 2px 0 rgba(0,0,0,.85);transform:translateY(-1px);}
+  .rail{background:var(--panel);}
+  .rail .rbtn{border-radius:13px;}
+  input[type=range]::-webkit-slider-thumb,input[type=range].vrange::-webkit-slider-thumb{width:19px;height:19px;box-shadow:0 1px 5px rgba(124,108,255,.5);}
+  .canvas-wrap{background-color:var(--canvas-bg);
+    background-image:radial-gradient(var(--dot) 1.6px,transparent 1.6px);
+    background-size:18px 18px;background-position:0 0;}
+  #stage{border:1px solid var(--border);box-shadow:0 8px 28px rgba(24,24,45,.14);border-radius:6px;}
+  .side .section h3{text-transform:none;letter-spacing:0;font-size:14px;color:var(--text);font-weight:400;}
+  .side .row label{font-size:12.5px;}
+  .toggle-line{font-size:12.5px;}
+  .btype,.sym-row button,.mini button,.btn-grid button,.btn,.gtab,.hex-box input,select{border-radius:13px;font-weight:400;}
+  .btype{border-radius:15px;}
+  .mini button{white-space:nowrap;font-size:11.5px;padding:0 6px;}
+  .btype:hover,.sym-row button:hover,.mini button:hover,.btn-grid button:hover{background:rgba(124,108,255,.10);color:var(--text);}
+  .btype.active,.sym-row button.active,.gbtn.active,.gmode.active{background:rgba(124,108,255,.15);border-color:var(--accent);color:var(--accent-2);box-shadow:2px 2px 0 rgba(0,0,0,.6);}
+  .palette{grid-template-columns:repeat(6,1fr);gap:6px;}
+  .palette .sw{border-radius:8px;}
+  .palette .sw.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);}
+  .swatch-big{border-radius:13px;}
+  .layer{border-radius:15px;}
+  .layer.active{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent);}
+  .btn.primary{color:#fff;}
+  .btn,.modal-box h2,.section h3{font-weight:400;}
+  .zoom-badge{background:var(--panel);color:var(--text-dim);border:1px solid var(--border);font-weight:400;border-radius:11px;}
+  #toast{border-radius:15px;font-weight:400;}
+  .modal-box{border-radius:24px;}
+  /* 오른쪽 패널 열고닫기 / 너비조절 */
+  .side{transition:width .18s ease;}
+  .side.collapsed{width:0!important;min-width:0;border-left:none;overflow:hidden;padding:0;}
+  .resizer{flex:0 0 8px;align-self:stretch;cursor:col-resize;position:relative;background:transparent;z-index:6;}
+  .resizer::before{content:"";position:absolute;left:3px;top:50%;transform:translateY(-50%);width:3px;height:40px;border-radius:3px;background:var(--border);transition:background .15s;}
+  .resizer:hover::before{background:var(--accent);height:60px;}
+  .resizer.hidden{display:none;}
+
+  /* ===== 둥근 테두리 강조 (무무 참고) ===== */
+  .group{border:2px solid var(--edge);box-shadow:2px 2px 0 rgba(0,0,0,.10);}
+  .rail .rbtn{border:2px solid var(--edge);box-shadow:1.5px 1.5px 0 rgba(0,0,0,.10);}
+  #stage{border:2px solid var(--edge);border-radius:8px;}
+  .btype,.sym-row button,.mini button,.btn-grid button,.btn,.gtab,select,.hex-box input,.layer,.swatch-big{border:2px solid var(--edge);}
+  .btype,.sym-row button,.mini button,.btn-grid button,.btn,.layer{box-shadow:1.5px 1.5px 0 rgba(0,0,0,.10);}
+  .btype,.layer{border-radius:16px;}
+  .mini button,.btn-grid button,.sym-row button{border-radius:13px;}
+  .btn{border-radius:14px;}
+  .hex-box input,select{border-radius:12px;}
+  .mini button{color:var(--text);}
+  .swatch-big{border-radius:14px;}
+  .palette .sw{border:2px solid var(--edge);border-radius:9px;}
+  .palette .sw.sel{border-color:var(--edge);box-shadow:0 0 0 2px var(--accent);}
+  .switch .slider{border:2px solid var(--edge);}
+  .zoom-badge{border:2px solid var(--edge);border-radius:11px;}
+  .modal-box{border:2.5px solid var(--edge);border-radius:24px;box-shadow:5px 5px 0 rgba(0,0,0,.14);}
+  input[type=range]::-webkit-slider-thumb,input[type=range].vrange::-webkit-slider-thumb{border:2px solid var(--edge);}
+  button.tool.active{box-shadow:2px 2px 0 var(--edge);}
+  .btype.active,.sym-row button.active,.gbtn.active,.gmode.active{border-color:var(--accent);box-shadow:2px 2px 0 var(--edge);}
 </style>
 </head>
 <body>
@@ -234,7 +308,7 @@
       <button class="tool" data-tool="eraser" title="지우개 (E)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16a2 2 0 0 1 0-3l9-9a2 2 0 0 1 3 0l6 6a2 2 0 0 1 0 3l-8 8"/><path d="M6 11l7 7"/></svg></button>
       <button class="tool" data-tool="fill" title="색 채우기 (G)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11l-8-8-8.5 8.5a1.4 1.4 0 0 0 0 2L8 19a1.4 1.4 0 0 0 2 0z"/><path d="M5 13h14"/><path d="M20.5 16s1.5 1.8 1.5 3a1.5 1.5 0 1 1-3 0c0-1.2 1.5-3 1.5-3z"/></svg></button>
       <button class="tool" data-tool="gradient" title="그라데이션 (D)"><svg viewBox="0 0 24 24"><defs><linearGradient id="gico" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs><rect x="3.5" y="5.5" width="17" height="13" rx="2" fill="url(#gico)" stroke="currentColor" stroke-width="1.6"/></svg></button>
-      <button class="tool" data-tool="eyedropper" title="스포이드 (I)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22l1-4 11-11"/><path d="M14 7l3 3"/><path d="M17.5 3.5a2.12 2.12 0 0 1 3 3L15 12l-3-3z"/></svg></button>
+      <button class="tool" data-tool="eyedropper" title="스포이드 (I)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.12 2.12 0 1 1 3 3L18 9l.4.4a2.12 2.12 0 1 1-3 3l-3.8-3.8a2.12 2.12 0 1 1 3-3l.4.4Z"/></svg></button>
       <button class="tool" data-tool="line" title="직선 (L)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg></button>
       <button class="tool" data-tool="rect" title="사각형 (R)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button>
       <button class="tool" data-tool="circle" title="원 (C)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg></button>
@@ -242,25 +316,17 @@
     </div>
 
     <div class="group">
-      <button class="act" id="undoBtn" title="실행 취소 (Ctrl+Z)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 0 3-7.7L3 8"/></svg></button>
-      <button class="act" id="redoBtn" title="다시 실행 (Ctrl+Y)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/></svg></button>
+      <button class="act" id="undoBtn" title="실행 취소 (Ctrl+Z)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a6 6 0 0 1 0 12h-4"/></svg></button>
+      <button class="act" id="redoBtn" title="다시 실행 (Ctrl+Y)" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a6 6 0 0 0 0 12h4"/></svg></button>
     </div>
 
     <div class="spacer"></div>
 
     <div class="group">
-      <button class="act" id="classRoomBtn" title="학급 방 (여러 기기 실시간 공유)">🏫<span class="hide-sm">학급방</span></button>
-    </div>
-    <div class="group">
-      <button class="act" id="boardBtn" title="이 기기에 게시(로컬)">📌<span class="hide-sm">게시</span></button>
-      <button class="act" id="submitBtn" title="선생님께 제출">📮<span class="hide-sm">제출</span></button>
-      <button class="act" id="galleryBtn" title="게시판/제출함 보기">🖼<span class="hide-sm">게시판</span></button>
-    </div>
-    <div class="group">
       <button class="act" id="saveBtn" title="이미지로 저장"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg><span class="hide-sm">저장</span></button>
       <button class="act" id="themeBtn" title="화면 테마 (밝게/어둡게)">🌙</button>
     </div>
-    <button class="act mobile-toggle" id="panelToggle" title="패널"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <button class="act" id="panelToggle" title="도구 패널 열기/닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><line x1="14" y1="4" x2="14" y2="20"/></svg></button>
   </div>
 
   <div class="main">
@@ -274,13 +340,15 @@
         <span class="vlabel">농도</span>
         <input type="range" class="vrange" id="vOpacity" min="1" max="100" value="100">
       </div>
-      <button class="rbtn" id="railEyedrop" title="스포이드">💧</button>
+      <button class="rbtn" id="railEyedrop" title="스포이드"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.12 2.12 0 1 1 3 3L18 9l.4.4a2.12 2.12 0 1 1-3 3l-3.8-3.8a2.12 2.12 0 1 1 3-3l.4.4Z"/></svg></button>
     </div>
 
     <div class="canvas-wrap" id="canvasWrap">
       <div id="stage"></div>
       <div class="zoom-badge" id="zoomBadge">100%</div>
     </div>
+
+    <div class="resizer" id="resizer" title="드래그하여 너비 조절"></div>
 
     <!-- 오른쪽 패널 -->
     <div class="side" id="side">
@@ -404,7 +472,7 @@
           <button id="clearBtn">현재비우기</button>
         </div>
         <div class="mini" style="margin-top:6px;">
-          <button id="importBtn">🖼 사진 넣기</button>
+          <button id="importBtn">🖼 사진넣기</button>
           <button id="projSave">💾 작업저장</button>
           <button id="projLoad">📂 작업열기</button>
         </div>
@@ -423,13 +491,19 @@
       </div>
     </div>
   </div>
+  <div class="footer">
+    <span>🎨 드로잉 스튜디오 <b>v1.0</b></span>
+    <span>·</span>
+    <span>만든이 <a id="credit" href="https://www.instagram.com/ggagossam/" target="_blank" rel="noopener noreferrer">📷 까망이고동이</a></span>
+    <span>·</span>
+    <span>ⓒ 2026</span>
+  </div>
 </div>
 
 <div id="modalRoot"></div>
 <div class="bigview" id="bigview"><img id="bigimg" src=""></div>
 <div id="toast"></div>
 
-<script src="qr.js"></script>
 <script>
 "use strict";
 (function(){
@@ -738,25 +812,51 @@
   }
   function clearCursor(){if(cursorCtx)cursorCtx.clearRect(0,0,state.W,state.H);}
 
-  // ───────── 색 채우기 ─────────
-  function floodFill(layer,sx,sy,hexColor,alpha){
+  // ───────── 색 채우기 (경계 틈 보정) ─────────
+  // grow: 선의 안티에일리어싱 경계 밑으로 채움을 확장할 픽셀 수 (틈/헤일로 제거)
+  function floodFill(layer,sx,sy,hexColor,alpha,grow){
     if(sx<0||sy<0||sx>=state.W||sy>=state.H)return;
+    grow=(grow==null)?2:grow;
     const ctx=layer.ctx,img=ctx.getImageData(0,0,state.W,state.H),data=img.data,W=state.W,H=state.H;
     const at=(x,y)=>(y*W+x)*4;const start=at(sx,sy);
     const sr=data[start],sg=data[start+1],sb=data[start+2],sa=data[start+3];
-    const fill=hexToRgb(hexColor),fa=Math.round(alpha*255),tol=32;
-    if(Math.abs(sr-fill.r)<2&&Math.abs(sg-fill.g)<2&&Math.abs(sb-fill.b)<2&&Math.abs(sa-fa)<2)return;
-    const match=i=>{const dr=data[i]-sr,dg=data[i+1]-sg,db=data[i+2]-sb,da=data[i+3]-sa;return(dr*dr+dg*dg+db*db+da*da)<=tol*tol*4;};
-    const stack=[[sx,sy]],seen=new Uint8Array(W*H);
-    while(stack.length){const [x,y]=stack.pop();let top=y;while(top>=0&&match(at(x,top)))top--;top++;
+    const fill=hexToRgb(hexColor);
+    // 이미 같은 색이면(불투명 채우기) 아무것도 하지 않음 → 반복 클릭으로 선이 깎이는 것 방지
+    if(alpha>=1&&Math.abs(sr-fill.r)<4&&Math.abs(sg-fill.g)<4&&Math.abs(sb-fill.b)<4&&sa>250)return;
+    const tol=50, tol2=tol*tol*4;
+    const match=i=>{const dr=data[i]-sr,dg=data[i+1]-sg,db=data[i+2]-sb,da=data[i+3]-sa;return(dr*dr+dg*dg+db*db+da*da)<=tol2;};
+    // 1) 스캔라인 플러드필 → 마스크 (원본 픽셀만 비교, 데이터는 나중에 칠함)
+    const mask=new Uint8Array(W*H);
+    const stack=[sx|0,sy|0];
+    while(stack.length){
+      const y=stack.pop(), x=stack.pop();
+      let yy=y; while(yy>=0&&!mask[yy*W+x]&&match(at(x,yy)))yy--; yy++;
       let reachL=false,reachR=false;
-      for(let yy=top;yy<H&&match(at(x,yy));yy++){const pi=at(x,yy);
-        if(alpha>=1){data[pi]=fill.r;data[pi+1]=fill.g;data[pi+2]=fill.b;data[pi+3]=255;}
-        else{data[pi]=Math.round(fill.r*alpha+data[pi]*(1-alpha));data[pi+1]=Math.round(fill.g*alpha+data[pi+1]*(1-alpha));
-          data[pi+2]=Math.round(fill.b*alpha+data[pi+2]*(1-alpha));data[pi+3]=Math.round(255*alpha+data[pi+3]*(1-alpha));}
-        seen[yy*W+x]=1;
-        if(x>0){if(match(at(x-1,yy))&&!seen[yy*W+(x-1)]){if(!reachL){stack.push([x-1,yy]);reachL=true;}}else reachL=false;}
-        if(x<W-1){if(match(at(x+1,yy))&&!seen[yy*W+(x+1)]){if(!reachR){stack.push([x+1,yy]);reachR=true;}}else reachR=false;}}}
+      for(;yy<H&&!mask[yy*W+x]&&match(at(x,yy));yy++){
+        mask[yy*W+x]=1;
+        if(x>0){const m=!mask[yy*W+x-1]&&match(at(x-1,yy));if(m&&!reachL){stack.push(x-1,yy);reachL=true;}else if(!m)reachL=false;}
+        if(x<W-1){const m=!mask[yy*W+x+1]&&match(at(x+1,yy));if(m&&!reachR){stack.push(x+1,yy);reachR=true;}else if(!m)reachR=false;}
+      }
+    }
+    // 2) 마스크를 grow 픽셀만큼 확장(8방향) → 선의 반투명 경계 밑까지 덮기
+    let cur=mask;
+    for(let g=0;g<grow;g++){
+      const nx=cur.slice();
+      for(let y=1;y<H-1;y++){const row=y*W;
+        for(let x=1;x<W-1;x++){const p=row+x;
+          if(cur[p]){nx[p]=1;continue;}
+          if(cur[p-1]||cur[p+1]||cur[p-W]||cur[p+W]||cur[p-W-1]||cur[p-W+1]||cur[p+W-1]||cur[p+W+1])nx[p]=1;
+        }}
+      cur=nx;
+    }
+    // 3) 색 적용
+    for(let p=0,pi=0;p<W*H;p++,pi+=4){
+      if(!cur[p])continue;
+      if(alpha>=1){data[pi]=fill.r;data[pi+1]=fill.g;data[pi+2]=fill.b;data[pi+3]=255;}
+      else{const ia=1-alpha;
+        data[pi]=Math.round(fill.r*alpha+data[pi]*ia);data[pi+1]=Math.round(fill.g*alpha+data[pi+1]*ia);
+        data[pi+2]=Math.round(fill.b*alpha+data[pi+2]*ia);data[pi+3]=Math.round(255*alpha+data[pi+3]*ia);}
+    }
     ctx.putImageData(img,0,0);
   }
 
@@ -833,10 +933,12 @@
     const t=layers[idx];layers[idx]=layers[ni];layers[ni]=t;rebuildStage();renderLayerList();}
 
   // ───────── 팔레트 ─────────
-  const paletteColors=['#000000','#434343','#666666','#999999','#b7b7b7','#cccccc','#efefef','#f3f3f3','#ffffff',
-    '#980000','#ff0000','#ff9900','#ffff00','#00ff00','#00ffff','#4a86e8','#0000ff','#9900ff',
-    '#e6b8af','#f4cccc','#fce5cd','#fff2cc','#d9ead3','#d0e0e3','#c9daf8','#cfe2f3','#d9d2e9',
-    '#cc4125','#e06666','#f6b26b','#ffd966','#93c47d','#76a5af','#6d9eeb','#6fa8dc','#8e7cc3'];
+  const paletteColors=[
+    '#000000','#555555','#9e9e9e','#cfcfcf','#ffffff','#7f5539',
+    '#b71c1c','#e53935','#ff5252','#ff8a65','#ff7043','#f4511e',
+    '#fdd835','#ffee58','#cddc39','#9ccc65','#66bb6a','#2e7d32',
+    '#26a69a','#00acc1','#29b6f6','#42a5f5','#1e88e5','#1565c0',
+    '#5e35b1','#7e57c2','#ab47bc','#ce93d8','#ec407a','#f06292'];
   const paletteEl=document.getElementById('palette');
   function buildPalette(){paletteEl.innerHTML='';paletteColors.forEach(c=>{const d=document.createElement('div');
     d.className='sw';d.style.background=c;d.dataset.c=c;d.title=c;d.onclick=()=>applyColor(hexToRgb(c));paletteEl.appendChild(d);});markPalette();}
@@ -952,72 +1054,14 @@
       l.ctx.drawImage(src,-state.W/2,-state.H/2);}
     l.ctx.restore();updateThumb(l);}
 
-  // ───────── 게시/제출 (localStorage) ─────────
-  const LS_KEY='drawingStudio.posts.v1';
-  function loadPosts(){try{return JSON.parse(localStorage.getItem(LS_KEY))||[];}catch(e){return[];}}
-  function savePosts(a){try{localStorage.setItem(LS_KEY,JSON.stringify(a));return true;}catch(e){toast('저장 공간이 부족해요. 오래된 항목을 지워주세요');return false;}}
-  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-
-  function openShareDialog(mode){const isSub=mode==='submit';
-    const dataUrl=flatten(1000,true).toDataURL('image/jpeg',0.82);
-    const name=localStorage.getItem('ds.name')||'',num=localStorage.getItem('ds.num')||'',teacher=localStorage.getItem('ds.teacher')||'';
-    openModal(`<h2>${isSub?'📮 선생님께 제출하기':'📌 학급 게시판에 올리기'}</h2>
-      <div class="share-body"><img class="share-prev" src="${dataUrl}">
-      <div class="share-form">
-        <label>이름</label><input type="text" id="f_name" value="${esc(name)}" placeholder="이름">
-        ${isSub?`<label>번호</label><input type="text" id="f_num" value="${esc(num)}" placeholder="번호">`:''}
-        <label>한마디 ${isSub?'(선생님께)':'(작품 설명)'}</label><textarea id="f_msg" placeholder="하고 싶은 말"></textarea>
-        ${isSub?`<label>선생님 이메일 (선택)</label><input type="email" id="f_teacher" value="${esc(teacher)}" placeholder="teacher@school.kr">`:''}
-      </div></div>
-      <div class="modal-actions"><button class="btn ghost" data-close>취소</button>
-        ${isSub?'<button class="btn" id="f_share">📤 공유/보내기</button>':''}
-        <button class="btn primary" id="f_go">${isSub?'제출하기':'게시하기'}</button></div>`);
-    const gv=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
-    document.getElementById('f_go').onclick=()=>{const nm=gv('f_name');if(!nm){toast('이름을 입력해주세요');return;}
-      const msg=gv('f_msg'),numv=gv('f_num'),tea=gv('f_teacher');
-      localStorage.setItem('ds.name',nm);if(isSub){localStorage.setItem('ds.num',numv);if(tea)localStorage.setItem('ds.teacher',tea);}
-      const posts=loadPosts();posts.unshift({id:Date.now()+'_'+Math.floor(Math.random()*1000),type:isSub?'submit':'board',
-        name:nm,number:numv,message:msg,teacher:tea,dataUrl,date:Date.now()});
-      if(savePosts(posts)){closeModal();
-        if(isSub){saveArtworkFile(nm,numv);toast('제출 완료! 이미지도 저장했어요');}
-        else{toast('게시판에 올렸어요');openGallery('board');}}};
-    if(isSub){document.getElementById('f_share').onclick=async()=>{const nm=gv('f_name')||'작품',msg=gv('f_msg'),tea=gv('f_teacher');
-      const c=flatten(1600,true);c.toBlob(async b=>{const file=new File([b],`${nm}_작품.png`,{type:'image/png'});
-        if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'그림 제출',text:msg});}catch(e){}}
-        else{saveArtworkFile(nm,gv('f_num'));if(tea)window.location.href=`mailto:${encodeURIComponent(tea)}?subject=${encodeURIComponent('['+nm+'] 그림 제출')}&body=${encodeURIComponent(msg+'\n\n(저장된 이미지 파일을 첨부해 주세요)')}`;
-          toast('이미지를 저장했어요. 메신저·이메일에 첨부해 보내세요');}},'image/png');};}
-  }
-  function saveArtworkFile(name,num){downloadCanvas(flatten(0,true),`${name||'작품'}${num?('_'+num):''}_${dateStr()}.png`,'image/png');}
-
-  function openGallery(tab){tab=tab||'board';const posts=loadPosts();const list=posts.filter(p=>p.type===tab);
-    openModal(`<div class="gtabs">
-      <button class="gtab ${tab==='board'?'on':''}" data-tab="board">🖼 우리 반 게시판</button>
-      <button class="gtab ${tab==='submit'?'on':''}" data-tab="submit">📥 제출함</button>
-      <span style="flex:1"></span><button class="btn ghost" data-close>닫기</button></div>
-      <div class="gallery">${list.length?list.map(cardHtml).join(''):'<div class="empty">아직 없어요. 그림을 그린 뒤 상단의 게시/제출 버튼을 눌러보세요.</div>'}</div>`,'wide');
-  }
-  function cardHtml(p){return`<div class="gcard"><img src="${p.dataUrl}" data-act="view" data-id="${p.id}">
-    <div class="ginfo"><div class="gname">${esc(p.name)}${p.number?(' · '+esc(p.number)+'번'):''}</div>
-    <div class="gdate">${new Date(p.date).toLocaleString('ko-KR')}</div>
-    ${p.message?`<div class="gmsg">${esc(p.message)}</div>`:''}</div>
-    <div class="gacts"><button data-act="load" data-id="${p.id}">불러오기</button>
-    <button data-act="save" data-id="${p.id}">저장</button>
-    <button data-act="del" data-id="${p.id}">삭제</button></div></div>`;}
-
   // ───────── 모달 ─────────
   const modalRoot=document.getElementById('modalRoot');
   function openModal(html,cls){modalRoot.innerHTML=`<div class="modal-box ${cls||''}">${html}</div>`;modalRoot.classList.add('open');}
-  function closeModal(){if(roomPollTimer){clearInterval(roomPollTimer);roomPollTimer=null;}modalRoot.classList.remove('open');modalRoot.innerHTML='';}
+  function closeModal(){modalRoot.classList.remove('open');modalRoot.innerHTML='';}
   modalRoot.addEventListener('click',e=>{
     if(e.target===modalRoot){closeModal();return;}
     if(e.target.closest('[data-close]')){closeModal();return;}
-    const tab=e.target.closest('[data-tab]');if(tab){openGallery(tab.dataset.tab);return;}
-    const act=e.target.closest('[data-act]');if(act){const id=act.dataset.id,posts=loadPosts(),p=posts.find(x=>x.id===id);if(!p)return;
-      if(act.dataset.act==='view'){document.getElementById('bigimg').src=p.dataUrl;document.getElementById('bigview').classList.add('open');}
-      else if(act.dataset.act==='load'){loadImageToLayer(p.dataUrl,esc(p.name)+' 작품');closeModal();}
-      else if(act.dataset.act==='save'){const a=document.createElement('a');a.href=p.dataUrl;a.download=`${p.name}_${p.id}.jpg`;a.click();}
-      else if(act.dataset.act==='del'){if(confirm('이 항목을 삭제할까요?')){savePosts(posts.filter(x=>x.id!==id));
-        openGallery(p.type);}}}});
+  });
   document.getElementById('bigview').addEventListener('click',()=>document.getElementById('bigview').classList.remove('open'));
 
   // ───────── 토스트 ─────────
@@ -1103,10 +1147,6 @@
     document.getElementById('sv_png').onclick=()=>{downloadCanvas(flatten(0,false),'그림_'+dateStr()+'.png','image/png');closeModal();toast('PNG로 저장했어요');};
     document.getElementById('sv_jpg').onclick=()=>{downloadCanvas(flatten(0,true),'그림_'+dateStr()+'.jpg','image/jpeg',0.92);closeModal();toast('JPG로 저장했어요');};};
 
-  document.getElementById('boardBtn').onclick=()=>openShareDialog('board');
-  document.getElementById('submitBtn').onclick=()=>openShareDialog('submit');
-  document.getElementById('galleryBtn').onclick=()=>openGallery('board');
-
   document.getElementById('addLayer').onclick=()=>{const l=addLayerObj('레이어 '+(layers.length+1));applyLayerStyle(l);stage.insertBefore(l.canvas,cursorCanvas);renderLayerList();};
   document.getElementById('dupLayer').onclick=()=>{const src=activeLayer();if(!src)return;const l=addLayerObj(src.name+' 복사');
     l.opacity=src.opacity;l.blend=src.blend;l.alphaLock=src.alphaLock;l.ctx.drawImage(src.canvas,0,0);applyLayerStyle(l);stage.insertBefore(l.canvas,cursorCanvas);renderLayerList();};
@@ -1136,7 +1176,14 @@
   document.getElementById('projFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;
     const rd=new FileReader();rd.onload=()=>{try{loadProject(JSON.parse(rd.result));}catch(err){toast('파일을 읽을 수 없어요');}};rd.readAsText(f);e.target.value='';});
 
-  document.getElementById('panelToggle').onclick=()=>document.getElementById('side').classList.toggle('open');
+  document.getElementById('panelToggle').onclick=()=>{const s=document.getElementById('side');
+    const col=s.classList.toggle('collapsed');document.getElementById('resizer').classList.toggle('hidden',col);};
+  (function(){const rz=document.getElementById('resizer'),side=document.getElementById('side');let sw=0,sx=0,drag=false;
+    rz.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX;sw=side.getBoundingClientRect().width;
+      try{rz.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();});
+    rz.addEventListener('pointermove',e=>{if(!drag)return;side.style.width=clamp(sw-(e.clientX-sx),200,480)+'px';});
+    const end=e=>{drag=false;try{rz.releasePointerCapture(e.pointerId);}catch(_){}};
+    rz.addEventListener('pointerup',end);rz.addEventListener('pointercancel',end);})();
 
   // ───────── 키보드 ─────────
   window.addEventListener('keydown',e=>{
@@ -1158,148 +1205,14 @@
     stage.style.cursor=['brush','eraser','smudge'].includes(state.tool)?'none':(state.tool==='move'?'move':'crosshair');}});
   window.addEventListener('resize',()=>updateTransform());
 
-  // ───────── 학급 방 (서버 연동) ─────────
-  let roomPollTimer=null;
-  const api={
-    async health(){const r=await fetch('/api/health');return r.json();},
-    async createRoom(name){const r=await fetch('/api/rooms',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});return r.json();},
-    async getRoom(code){const r=await fetch('/api/rooms/'+code);if(!r.ok)return null;return r.json();},
-    async submit(code,p){const r=await fetch('/api/rooms/'+code+'/items',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});if(!r.ok)throw new Error('submit');return r.json();},
-    async items(code,since){const r=await fetch('/api/rooms/'+code+'/items?since='+(since||0));return r.json();},
-    async del(code,id,key){const r=await fetch('/api/rooms/'+code+'/items/'+id,{method:'DELETE',headers:{'x-manage-key':key}});return r.json();},
-  };
-  function loadMyRooms(){try{return JSON.parse(localStorage.getItem('ds.myrooms'))||[];}catch(e){return[];}}
-  function saveMyRooms(a){try{localStorage.setItem('ds.myrooms',JSON.stringify(a));}catch(e){}}
-
-  async function openClassHub(){
-    let health=null;try{health=await api.health();}catch(e){}
-    if(!health||!health.ok){openModal(`<h2>🏫 학급 방</h2>
-      <p style="color:var(--text-dim);font-size:13px;line-height:1.8;">여러 기기에서 실시간으로 공유하려면 <b>학급 방 서버</b>가 켜져 있어야 해요.<br><br>
-      <b>선생님 실행 방법</b><br>
-      1) 이 폴더에서 명령창(터미널)을 엽니다.<br>
-      2) <code style="background:var(--panel-2);padding:1px 5px;border-radius:4px;">node server.js</code> 를 실행합니다.<br>
-      3) 화면에 나오는 주소(예: http://192.168...:3000)를 학생에게 알려줍니다.<br><br>
-      지금은 파일을 직접 연 상태라, 상단의 📌게시·📮제출(이 기기 저장)만 사용할 수 있어요.</p>
-      <div class="modal-actions"><button class="btn primary" data-close>확인</button></div>`);return;}
-    if(state.room){openRoomMemberView();}else{openHub();}
-  }
-
-  function openHub(){
-    const mine=loadMyRooms();
-    openModal(`<h2>🏫 학급 방 만들기</h2>
-      <p style="color:var(--text-dim);font-size:13px;">방을 만들고 <b>링크·QR</b>을 학생에게 공유하면, 학생이 접속해 작품을 제출하고 선생님이 실시간으로 모아 볼 수 있어요.</p>
-      <label>방 이름</label><input type="text" id="rm_name" placeholder="예: 3학년 2반 미술" value="${esc(localStorage.getItem('ds.roomname')||'우리 반')}">
-      <div class="modal-actions"><button class="btn ghost" data-close>취소</button><button class="btn primary" id="rm_create">방 개설하기</button></div>
-      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
-        <label style="margin-top:0;">학생: 방 코드로 참여</label>
-        <div style="display:flex;gap:6px;"><input type="text" id="rm_join" placeholder="예: ABCD" maxlength="6" style="text-transform:uppercase;"><button class="btn" id="rm_joinbtn">참여</button></div>
-      </div>
-      ${mine.length?`<div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
-        <div style="font-size:12px;color:var(--text-dim);margin-bottom:6px;">내가 만든 방</div>
-        ${mine.map(r=>`<div class="btn-grid" style="margin-top:6px;"><button data-openroom="${r.code}" style="flex:2;justify-content:flex-start;">🏫 ${esc(r.name)} · <b>${r.code}</b></button><button data-delroom="${r.code}" style="flex:0 0 56px;">잊기</button></div>`).join('')}</div>`:''}`);
-    document.getElementById('rm_create').onclick=async()=>{
-      const name=document.getElementById('rm_name').value.trim()||'우리 반';localStorage.setItem('ds.roomname',name);
-      try{const res=await api.createRoom(name);const m=loadMyRooms();m.unshift({code:res.code,name:res.name,manageKey:res.manageKey});saveMyRooms(m);showRoomShare({code:res.code,name:res.name,manageKey:res.manageKey});}
-      catch(e){toast('방 생성 실패: 서버를 확인하세요');}};
-    document.getElementById('rm_joinbtn').onclick=()=>{const c=(document.getElementById('rm_join').value||'').trim().toUpperCase();if(c)location.href=location.origin+'/?room='+c;};
-    document.querySelectorAll('[data-openroom]').forEach(b=>b.onclick=()=>{const r=loadMyRooms().find(x=>x.code===b.dataset.openroom);if(r)showRoomShare(r);});
-    document.querySelectorAll('[data-delroom]').forEach(b=>b.onclick=()=>{if(confirm('이 방을 목록에서 지울까요? (서버의 작품은 유지됩니다)')){saveMyRooms(loadMyRooms().filter(x=>x.code!==b.dataset.delroom));openHub();}});
-  }
-
-  async function shareUrl(code){let host=location.host;
-    if(/^(localhost|127\.|\[?::1)/i.test(location.hostname)){try{const h=await api.health();if(h.ips&&h.ips.length)host=h.ips[0]+':'+h.port;}catch(e){}}
-    return location.protocol+'//'+host+'/?room='+code;}
-
-  async function showRoomShare(room){
-    const url=await shareUrl(room.code);
-    openModal(`<h2>🏫 ${esc(room.name)}</h2>
-      <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;">
-        <div style="text-align:center;"><canvas id="rm_qr" style="background:#fff;border-radius:8px;"></canvas><div style="font-size:11px;color:var(--text-dim);margin-top:6px;">📷 휴대폰 카메라로 스캔</div></div>
-        <div style="flex:1;min-width:210px;">
-          <label style="margin-top:0;">접속 링크</label><div style="display:flex;gap:6px;"><input type="text" id="rm_url" readonly value="${esc(url)}"><button class="btn" id="rm_copy">복사</button></div>
-          <label>방 코드</label><div style="font-size:30px;font-weight:800;letter-spacing:4px;color:var(--accent);">${room.code}</div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:6px;line-height:1.6;">학생은 <b>링크/QR</b>로 접속하거나, 접속 화면에서 <b>방 코드</b>를 입력합니다.<br>같은 와이파이에 연결되어 있어야 해요.</div>
-        </div></div>
-      <div class="modal-actions"><button class="btn ghost" data-close>닫기</button><button class="btn" id="rm_preview">학생 화면 미리보기</button><button class="btn primary" id="rm_manage">📊 작품 관리 화면</button></div>`,'wide');
-    try{if(window.QRCode)QRCode.draw(document.getElementById('rm_qr'),url,{size:200});else document.getElementById('rm_qr').replaceWith(document.createTextNode('(QR 미생성 — 링크 사용)'));}catch(e){}
-    document.getElementById('rm_copy').onclick=async()=>{try{await navigator.clipboard.writeText(url);}catch(e){const i=document.getElementById('rm_url');i.select();try{document.execCommand('copy');}catch(_){}}toast('링크를 복사했어요');};
-    document.getElementById('rm_preview').onclick=()=>window.open(url,'_blank');
-    document.getElementById('rm_manage').onclick=()=>openDashboard(room);
-  }
-
-  function openDashboard(room){
-    openModal(`<div class="gtabs"><b style="font-size:15px;">📊 ${esc(room.name)} · 작품 관리</b><span style="font-size:12px;color:var(--text-dim);">코드 ${room.code}</span><span style="flex:1"></span>
-      <button class="btn" id="dash_qr">QR·링크</button><button class="btn" id="dash_all">모두 저장</button><button class="btn ghost" data-close>닫기</button></div>
-      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;" id="dash_count">불러오는 중…</div>
-      <div class="gallery" id="dash_gallery"></div>`,'wide');
-    let lastTs=0;const seen=new Map();
-    document.getElementById('dash_qr').onclick=()=>showRoomShare(room);
-    document.getElementById('dash_all').onclick=()=>{const items=[...seen.values()];if(!items.length){toast('저장할 작품이 없어요');return;}
-      items.forEach((it,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=it.image;a.download=`${String(i+1).padStart(2,'0')}_${it.name}${it.number?('_'+it.number):''}.jpg`;a.click();},i*280));toast(items.length+'점 저장을 시작해요');};
-    function render(){const items=[...seen.values()].sort((a,b)=>b.ts-a.ts);
-      document.getElementById('dash_count').textContent=items.length?`총 ${items.length}점 (실시간 갱신 중)`:'아직 제출된 작품이 없어요. 학생이 접속해 제출하면 여기에 실시간으로 나타납니다.';
-      const g=document.getElementById('dash_gallery');if(!g)return;
-      g.innerHTML=items.map(it=>`<div class="gcard"><img src="${it.image}" data-view="${it.id}"><div class="ginfo"><div class="gname">${esc(it.name)}${it.number?(' · '+esc(it.number)+'번'):''}</div><div class="gdate">${new Date(it.ts).toLocaleString('ko-KR')}</div>${it.message?`<div class="gmsg">${esc(it.message)}</div>`:''}</div><div class="gacts"><button data-view="${it.id}">크게</button><button data-save="${it.id}">저장</button><button data-del="${it.id}">삭제</button></div></div>`).join('');
-      g.querySelectorAll('[data-view]').forEach(el=>el.onclick=()=>{const it=seen.get(el.dataset.view);if(it){document.getElementById('bigimg').src=it.image;document.getElementById('bigview').classList.add('open');}});
-      g.querySelectorAll('[data-save]').forEach(el=>el.onclick=()=>{const it=seen.get(el.dataset.save);const a=document.createElement('a');a.href=it.image;a.download=`${it.name}${it.number?('_'+it.number):''}.jpg`;a.click();});
-      g.querySelectorAll('[data-del]').forEach(el=>el.onclick=async()=>{const it=seen.get(el.dataset.del);if(it&&confirm(`${it.name} 학생의 작품을 삭제할까요?`)){try{await api.del(room.code,it.id,room.manageKey);seen.delete(it.id);render();toast('삭제했어요');}catch(e){toast('삭제 실패(권한)');}}});}
-    async function refresh(){try{const d=await api.items(room.code,lastTs);d.items.forEach(it=>{seen.set(it.id,it);if(it.ts>lastTs)lastTs=it.ts;});render();}catch(e){}}
-    refresh();roomPollTimer=setInterval(refresh,2500);
-  }
-
-  function openRoomMemberView(){const room=state.room;
-    openModal(`<h2>🏫 ${esc(room.name)}</h2>
-      <p style="color:var(--text-dim);font-size:13px;">이 방에 그림을 제출하거나 친구들 작품을 볼 수 있어요.</p>
-      <div class="modal-actions" style="justify-content:flex-start;"><button class="btn primary" id="mv_submit">✏️ 내 작품 제출하기</button><button class="btn" id="mv_gallery">🖼 방 작품 보기</button></div>`);
-    document.getElementById('mv_submit').onclick=()=>studentSubmitDialog(room);
-    document.getElementById('mv_gallery').onclick=()=>openRoomGallery(room);}
-
-  function studentSubmitDialog(room){
-    const dataUrl=flatten(1200,true).toDataURL('image/jpeg',0.82);
-    const name=localStorage.getItem('ds.name')||'',num=localStorage.getItem('ds.num')||'';
-    openModal(`<h2>✏️ ${esc(room.name)}에 제출</h2>
-      <div class="share-body"><img class="share-prev" src="${dataUrl}"><div class="share-form">
-        <label style="margin-top:0;">이름</label><input type="text" id="s_name" value="${esc(name)}" placeholder="이름">
-        <label>번호</label><input type="text" id="s_num" value="${esc(num)}" placeholder="번호">
-        <label>한마디</label><textarea id="s_msg" placeholder="작품 설명"></textarea></div></div>
-      <div class="modal-actions"><button class="btn ghost" data-close>취소</button><button class="btn primary" id="s_go">제출하기</button></div>`);
-    document.getElementById('s_go').onclick=async()=>{const nm=document.getElementById('s_name').value.trim();if(!nm){toast('이름을 입력해주세요');return;}
-      const num=document.getElementById('s_num').value.trim(),msg=document.getElementById('s_msg').value.trim();
-      localStorage.setItem('ds.name',nm);localStorage.setItem('ds.num',num);
-      try{await api.submit(room.code,{name:nm,number:num,message:msg,image:dataUrl});closeModal();toast('제출 완료! 선생님 화면에 나타나요');}catch(e){toast('제출 실패: 연결을 확인하세요');}};}
-
-  function openRoomGallery(room){
-    openModal(`<div class="gtabs"><b style="font-size:15px;">🖼 ${esc(room.name)} 작품</b><span style="flex:1"></span><button class="btn ghost" data-close>닫기</button></div>
-      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;" id="rg_count">불러오는 중…</div><div class="gallery" id="rg_gallery"></div>`,'wide');
-    let lastTs=0;const seen=new Map();
-    function render(){const items=[...seen.values()].sort((a,b)=>b.ts-a.ts);
-      document.getElementById('rg_count').textContent=items.length?`총 ${items.length}점`:'아직 작품이 없어요.';
-      const g=document.getElementById('rg_gallery');if(!g)return;
-      g.innerHTML=items.map(it=>`<div class="gcard"><img src="${it.image}" data-view="${it.id}"><div class="ginfo"><div class="gname">${esc(it.name)}${it.number?(' · '+esc(it.number)+'번'):''}</div>${it.message?`<div class="gmsg">${esc(it.message)}</div>`:''}</div><div class="gacts"><button data-view="${it.id}">크게</button><button data-load="${it.id}">불러오기</button></div></div>`).join('');
-      g.querySelectorAll('[data-view]').forEach(el=>el.onclick=()=>{const it=seen.get(el.dataset.view);if(it){document.getElementById('bigimg').src=it.image;document.getElementById('bigview').classList.add('open');}});
-      g.querySelectorAll('[data-load]').forEach(el=>el.onclick=()=>{const it=seen.get(el.dataset.load);if(it){loadImageToLayer(it.image,esc(it.name)+' 작품');closeModal();}});}
-    async function refresh(){try{const d=await api.items(room.code,lastTs);d.items.forEach(it=>{seen.set(it.id,it);if(it.ts>lastTs)lastTs=it.ts;});render();}catch(e){}}
-    refresh();roomPollTimer=setInterval(refresh,3000);}
-
-  async function initRoom(){
-    const code=(new URLSearchParams(location.search).get('room')||'').toUpperCase();
-    if(!code)return;
-    try{const info=await api.getRoom(code);
-      if(info){state.room={code:info.code,name:info.name};document.getElementById('classRoomBtn').classList.add('active-room');
-        document.getElementById('classRoomBtn').title='학급 방: '+info.name;toast('🏫 '+info.name+' 학급 방에 참여했어요');openRoomMemberView();}
-      else toast('방을 찾을 수 없어요 ('+code+')');}catch(e){}
-  }
-  document.getElementById('classRoomBtn').onclick=openClassHub;
-
   // ───────── 시작 ─────────
   buildPalette();
-  applyTheme(localStorage.getItem('ds.theme')||'dark');
+  applyTheme(localStorage.getItem('ds.theme')||'light');
   initCanvas(1080,1080,false);
   setBrush('pencil');
   applyColor(hexToRgb('#222222'));
   state.color2=document.getElementById('color2').value;
   renderLayerList();
-  initRoom();
 })();
 </script>
 </body>
