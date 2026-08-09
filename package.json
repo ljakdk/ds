@@ -1,0 +1,12 @@
+{
+  "name": "drawing-studio-classroom",
+  "version": "1.0.0",
+  "description": "드로잉 스튜디오 - 학급 방 서버 (Node.js 내장 모듈만 사용)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
