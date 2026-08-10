@@ -134,6 +134,8 @@
   .layer{display:flex;align-items:center;gap:8px;padding:7px 8px;background:var(--panel-2);
     border:1px solid var(--border);border-radius:8px;cursor:pointer;}
   .layer.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+  .layer.locked{background:repeating-linear-gradient(45deg,var(--panel-2),var(--panel-2) 7px,rgba(127,127,127,.10) 7px,rgba(127,127,127,.10) 14px);}
+  .layer.locked .thumb{opacity:.75;}
   .layer .thumb{width:40px;height:30px;border-radius:4px;flex-shrink:0;background:#fff;
     border:1px solid var(--border);overflow:hidden;display:block;}
   .layer .thumb canvas{width:100%;height:100%;display:block;}
@@ -674,7 +676,7 @@
   function rebuildStage(){stage.innerHTML='';layers.forEach(l=>{applyLayerStyle(l);stage.appendChild(l.canvas);});
     stage.appendChild(cursorCanvas);}
   function addLayerObj(name){const c=makeCanvas(state.W,state.H);
-    const l={id:uid(),name:name||('레이어 '+layerSeq),canvas:c,ctx:c.getContext('2d'),visible:true,opacity:1,blend:'normal',alphaLock:false};
+    const l={id:uid(),name:name||('레이어 '+layerSeq),canvas:c,ctx:c.getContext('2d'),visible:true,opacity:1,blend:'normal',alphaLock:false,locked:false};
     l.ctx.lineCap='round';l.ctx.lineJoin='round';layers.push(l);activeLayerId=l.id;return l;}
 
   // ───────── 변환/좌표 ─────────
@@ -901,6 +903,7 @@
     const l=activeLayer();if(!l||!l.visible)return;
     const p=eventToCanvas(e);
     if(state.tool==='eyedropper'||(e.altKey&&!['line','rect','circle','move','select'].includes(state.tool))){pickColor(p.x,p.y);return;}
+    if(l.locked){toast('🔒 잠긴 레이어예요. 잠금을 풀어 주세요');return;}
     if(state.tool==='select'){
       if(selActive&&p.x>=selRect.x&&p.x<=selRect.x+selRect.w&&p.y>=selRect.y&&p.y<=selRect.y+selRect.h){
         selDragging=true;selMoveStart={x:p.x,y:p.y,rx:selRect.x,ry:selRect.y};drawing=true;return;}
@@ -1011,7 +1014,7 @@
   // grow: 선의 안티에일리어싱 경계 밑으로 채움을 확장할 픽셀 수 (틈/헤일로 제거)
   function floodFill(layer,sx,sy,hexColor,alpha,grow){
     if(sx<0||sy<0||sx>=state.W||sy>=state.H)return;
-    grow=(grow==null)?2:grow;
+    grow=(grow==null)?1:grow;
     const ctx=layer.ctx,img=ctx.getImageData(0,0,state.W,state.H),data=img.data,W=state.W,H=state.H;
     const at=(x,y)=>(y*W+x)*4;const start=at(sx,sy);
     const sr=data[start],sg=data[start+1],sb=data[start+2],sa=data[start+3];
@@ -1066,7 +1069,7 @@
 
   // ───────── 실행취소 (전체 상태 기반) ─────────
   function snapshot(){return {W:state.W,H:state.H,activeLayerId,bgColor:state.bgColor,
-    layers:layers.map(l=>({id:l.id,name:l.name,opacity:l.opacity,visible:l.visible,blend:l.blend,
+    layers:layers.map(l=>({id:l.id,name:l.name,opacity:l.opacity,visible:l.visible,blend:l.blend,locked:l.locked,
       img:l.ctx.getImageData(0,0,state.W,state.H)}))};}
   function restoreSnap(s){
     selActive=false;selCanvas=null;selRect=null;selDragging=false;
@@ -1074,7 +1077,7 @@
     if(s.bgColor){state.bgColor=s.bgColor;stage.style.background=s.bgColor;const bi=document.getElementById('bgColor');if(bi)bi.value=s.bgColor;}
     layers=s.layers.map(ld=>{const c=makeCanvas(s.W,s.H);const ctx=c.getContext('2d');ctx.putImageData(ld.img,0,0);
       ctx.lineCap='round';ctx.lineJoin='round';
-      return {id:ld.id,name:ld.name,canvas:c,ctx,visible:ld.visible,opacity:ld.opacity,blend:ld.blend,alphaLock:false};});
+      return {id:ld.id,name:ld.name,canvas:c,ctx,visible:ld.visible,opacity:ld.opacity,blend:ld.blend,alphaLock:false,locked:ld.locked||false};});
     activeLayerId=layers.some(l=>l.id===s.activeLayerId)?s.activeLayerId:(layers[layers.length-1]&&layers[layers.length-1].id);
     cursorCanvas=makeCanvas(s.W,s.H);cursorCanvas.id='cursorCanvas';cursorCtx=cursorCanvas.getContext('2d');
     strokeCanvas=makeCanvas(s.W,s.H);strokeCtx=strokeCanvas.getContext('2d');strokeCanvas.style.pointerEvents='none';
@@ -1092,21 +1095,25 @@
   function renderLayerList(){
     layerList.innerHTML='';
     [...layers].reverse().forEach(l=>{
-      const row=document.createElement('div');row.className='layer'+(l.id===activeLayerId?' active':'');row.dataset.id=l.id;
+      const row=document.createElement('div');row.className='layer'+(l.id===activeLayerId?' active':'')+(l.locked?' locked':'');row.dataset.id=l.id;
       const tw=document.createElement('span');tw.className='thumb';const tc=document.createElement('canvas');tc.width=40;tc.height=30;
       tw.appendChild(tc);l._thumb=tc;updateThumb(l);
       const nameWrap=document.createElement('span');nameWrap.className='lname';
       const nm=document.createElement('div');nm.textContent=l.name;nm.title='더블클릭하여 이름 변경';
       const meta=document.createElement('div');meta.className='lmeta';
-      meta.textContent=(l.blend!=='normal'?blendName(l.blend)+' · ':'')+Math.round(l.opacity*100)+'%'+(l.alphaLock?' · 🔒':'');
+      meta.textContent=(l.blend!=='normal'?blendName(l.blend)+' · ':'')+Math.round(l.opacity*100)+'%'+(l.locked?' · 🔒 잠김':'');
       nameWrap.appendChild(nm);nameWrap.appendChild(meta);
       const visBtn=document.createElement('button');visBtn.className='icon-btn'+(l.visible?'':' ');
       visBtn.innerHTML=l.visible?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.4 10.4 0 0 1 12 20C5 20 1 12 1 12a19 19 0 0 1 5.1-5.9M9.9 4.2A10.9 10.9 0 0 1 12 4c7 0 11 8 11 8a19 19 0 0 1-2.2 3.2M1 1l22 22"/></svg>';
       visBtn.title='표시/숨김';visBtn.onclick=ev=>{ev.stopPropagation();l.visible=!l.visible;applyLayerStyle(l);renderLayerList();};
+      const lockBtn=document.createElement('button');lockBtn.className='icon-btn'+(l.locked?' on':'');
+      lockBtn.innerHTML=l.locked?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>';
+      lockBtn.title=l.locked?'잠금 해제':'레이어 잠금';
+      lockBtn.onclick=ev=>{ev.stopPropagation();l.locked=!l.locked;if(l.locked&&selActive)commitSelection();renderLayerList();toast(l.locked?'🔒 레이어를 잠갔어요':'🔓 레이어 잠금을 풀었어요');};
       const delBtn=document.createElement('button');delBtn.className='icon-btn';delBtn.title='삭제';
       delBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
       delBtn.onclick=ev=>{ev.stopPropagation();deleteLayer(l.id);};
-      row.appendChild(tw);row.appendChild(nameWrap);row.appendChild(visBtn);row.appendChild(delBtn);
+      row.appendChild(tw);row.appendChild(nameWrap);row.appendChild(lockBtn);row.appendChild(visBtn);row.appendChild(delBtn);
       row.onclick=()=>{if(selActive)commitSelection();activeLayerId=l.id;syncLayerProps();renderLayerList();};
       nm.ondblclick=ev=>{ev.stopPropagation();const inp=document.createElement('input');inp.value=l.name;
         nm.textContent='';nm.appendChild(inp);inp.focus();inp.select();
@@ -1225,7 +1232,7 @@
     const w=img.width*s,h=img.height*s;l.ctx.drawImage(img,(state.W-w)/2,(state.H-h)/2,w,h);
     applyLayerStyle(l);stage.insertBefore(l.canvas,cursorCanvas);renderLayerList();toast('새 레이어로 불러왔어요');};img.src=dataUrl;}
   function serializeProject(){return {type:'drawing-studio',v:1,W:state.W,H:state.H,activeLayerId,bgColor:state.bgColor,
-    layers:layers.map(l=>({name:l.name,opacity:l.opacity,visible:l.visible,blend:l.blend,data:l.canvas.toDataURL('image/png')}))};}
+    layers:layers.map(l=>({name:l.name,opacity:l.opacity,visible:l.visible,blend:l.blend,locked:l.locked,data:l.canvas.toDataURL('image/png')}))};}
   function saveProject(){const blob=new Blob([JSON.stringify(serializeProject())],{type:'application/json'});const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);a.download='프로젝트_'+dateStr()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('프로젝트 파일을 저장했어요');}
   function loadProject(proj){if(!proj||proj.type!=='drawing-studio'){toast('올바른 프로젝트 파일이 아니에요');return;}
@@ -1235,7 +1242,7 @@
     cursorCanvas=makeCanvas(state.W,state.H);cursorCanvas.id='cursorCanvas';cursorCtx=cursorCanvas.getContext('2d');
     strokeCanvas=makeCanvas(state.W,state.H);strokeCtx=strokeCanvas.getContext('2d');strokeCanvas.style.pointerEvents='none';
     proj.layers.forEach((ld,i)=>{const c=makeCanvas(state.W,state.H);const l={id:uid(),name:ld.name,canvas:c,ctx:c.getContext('2d'),
-      visible:ld.visible,opacity:ld.opacity,blend:ld.blend||'normal',alphaLock:false};l.ctx.lineCap='round';l.ctx.lineJoin='round';
+      visible:ld.visible,opacity:ld.opacity,blend:ld.blend||'normal',alphaLock:false,locked:ld.locked||false};l.ctx.lineCap='round';l.ctx.lineJoin='round';
       layers[i]=l;const img=new Image();img.onload=()=>{l.ctx.drawImage(img,0,0);if(--pending===0){finishLoad();}};img.src=ld.data;});
     function finishLoad(){activeLayerId=layers[layers.length-1].id;rebuildStage();fitToScreen();renderLayerList();
       undoStack.length=0;redoStack.length=0;updateUndoButtons();scheduleAutosave();toast('불러왔어요');}}
@@ -1253,7 +1260,7 @@
     document.getElementById('au_load').onclick=()=>{loadProject(proj);closeModal();};
     document.getElementById('au_new').onclick=()=>{try{localStorage.removeItem(AUTO_KEY);}catch(e){}closeModal();};}
 
-  function transformLayer(kind){const l=activeLayer();if(!l)return;pushUndo();
+  function transformLayer(kind){const l=activeLayer();if(!l)return;if(l.locked){toast('🔒 잠긴 레이어예요. 잠금을 풀어 주세요');return;}pushUndo();
     const src=makeCanvas(state.W,state.H);src.getContext('2d').drawImage(l.canvas,0,0);
     l.ctx.save();l.ctx.clearRect(0,0,state.W,state.H);
     if(kind==='flipH'){l.ctx.translate(state.W,0);l.ctx.scale(-1,1);l.ctx.drawImage(src,0,0);}
@@ -1367,7 +1374,7 @@
   function clearAll(){openModal(`<h2>모두 지우기</h2>
     <p style="color:var(--text-dim);font-size:14px;line-height:1.75;">캔버스의 <b style="color:var(--text)">모든 레이어</b>를 깨끗이 지웁니다.<br>레이어 구성(개수·이름)은 그대로 두고 <b style="color:var(--text)">그림 내용만</b> 비워요.<br>실수로 지워도 상단 <b style="color:var(--text)">되돌리기(↩)</b> 또는 <b style="color:var(--text)">Ctrl+Z</b>로 되살릴 수 있어요.</p>
     <div class="modal-actions"><button class="btn ghost" data-close>취소</button><button class="btn primary" id="ca_ok">모두 지우기</button></div>`);
-    document.getElementById('ca_ok').onclick=()=>{pushUndo();layers.forEach(l=>{l.ctx.clearRect(0,0,state.W,state.H);updateThumb(l);});closeModal();toast('모두 지웠어요 (되돌리기로 되살릴 수 있어요)');};}
+    document.getElementById('ca_ok').onclick=()=>{pushUndo();layers.forEach(l=>{if(l.locked)return;l.ctx.clearRect(0,0,state.W,state.H);updateThumb(l);});closeModal();toast('모두 지웠어요 (잠긴 레이어는 보호돼요)');};}
   document.getElementById('clearAllBtn').onclick=clearAll;
   document.getElementById('saveBtn').onclick=()=>{openModal(`<h2>💾 이미지로 저장</h2>
     <p style="color:var(--text-dim);font-size:13px;">파일 형식을 선택하세요.</p>
